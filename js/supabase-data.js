@@ -10,6 +10,7 @@ const api={
  async allMembers(){const c=api.client();const r=await c.from('class_members').select('*, profiles(*)');if(r.error)throw r.error;return r.data||[]},
  async notes(classId){const c=api.client();let q=c.from('notes').select('*').order('created_at',{ascending:false});if(classId)q=q.eq('class_id',classId);const r=await q;if(r.error)throw r.error;return r.data||[]},
  async notices(classId){const c=api.client();let q=c.from('notices').select('*').order('created_at',{ascending:false});if(classId)q=q.eq('class_id',classId);const r=await q;if(r.error)throw r.error;return r.data||[]},
+ async addNotice(payload){const c=api.client();const r=await c.from('notices').insert(payload).select().single();if(r.error)throw r.error;return r.data},
  async timetable(classId){const c=api.client();let q=c.from('timetable').select('*').order('day').order('start_time');if(classId)q=q.eq('class_id',classId);const r=await q;if(r.error)throw r.error;return r.data||[]},
  async addClass(payload){const c=api.client();const r=await c.from('classes').insert(payload).select().single();if(r.error)throw r.error;return r.data},
  async updateClass(id,payload){const c=api.client();const r=await c.from('classes').update(payload).eq('id',id).select().single();if(r.error)throw r.error;return r.data},
