@@ -16,7 +16,8 @@ const api={
  async updateClass(id,payload){const c=api.client();const r=await c.from('classes').update(payload).eq('id',id).select().single();if(r.error)throw r.error;return r.data},
  async deleteClass(id){const c=api.client();const r=await c.from('classes').delete().eq('id',id);if(r.error)throw r.error;return true},
  async upsertMember(payload){const c=api.client();const r=await c.from('class_members').upsert(payload,{onConflict:'class_id,user_id'}).select().single();if(r.error)throw r.error;return r.data},
- async removeMember(id){const c=api.client();const r=await c.from('class_members').delete().eq('id',id);if(r.error)throw r.error;return true}
+ async removeMember(id){const c=api.client();const r=await c.from('class_members').delete().eq('id',id);if(r.error)throw r.error;return true},
+ async adminAction(action,payload){const c=api.client();if(!c)throw Error('Supabase is not configured');const r=await c.functions.invoke('admin-user',{body:{action,payload}});if(r.error)throw r.error;if(r.data?.error)throw Error(r.data.error);return r.data}
 };
 window.mcmDb=api;
 })();
