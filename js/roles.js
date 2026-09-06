@@ -5,12 +5,22 @@
   function openLogin(role){
     const label=role==='svl'?'SVL':'Student';
     const box=document.createElement('div'); box.className='mcm-auth-modal';
-    box.innerHTML=`<div class="mcm-auth-card"><button class="mcm-auth-close">×</button><h2>${label} Login</h2><p>Enter your MCM account details</p><form><input type="email" placeholder="Email address" required><input type="password" placeholder="Password" required><div class="mcm-auth-error"></div><button type="submit">Continue</button></form><small>Demo mode: use any email and password if Supabase is not ready.</small></div>`;
+    box.innerHTML=`<div class="mcm-auth-card"><button class="mcm-auth-close">×</button><h2>${label} Login</h2><p>Enter your MCM account details</p><form><input type="email" placeholder="Email address" required><input type="password" placeholder="Password" required><div class="mcm-auth-error"></div><button type="submit">Continue</button></form><small>Use an account created in Supabase Authentication.</small></div>`;
     document.body.appendChild(box); box.querySelector('.mcm-auth-close').onclick=()=>box.remove();
-    box.querySelector('form').onsubmit=async e=>{e.preventDefault(); const email=box.querySelector('input[type=email]').value.trim(); const password=box.querySelector('input[type=password]').value; const error=box.querySelector('.mcm-auth-error');
-      try{const client=window.initMcmSupabase&&window.initMcmSupabase(); if(client){const result=await client.auth.signInWithPassword({email,password}); if(result.error) throw result.error; localStorage.setItem('portalRole',role); location.hash=role==='svl'?'svl-dashboard':'student-dashboard'; return;}}
-      catch(err){if(!window.MCM_SUPABASE_URL){ } else {error.textContent='Account not found yet. Demo login is available below.';}}
-      if(email&&password){localStorage.setItem('portalRole',role);localStorage.setItem('demoUserEmail',email);box.remove();location.hash=role==='svl'?'svl-dashboard':'student-dashboard';}
+    box.querySelector('form').onsubmit=async e=>{e.preventDefault(); const email=box.querySelector('input[type=email]').value.trim(); const password=box.querySelector('input[type=password]').value; const error=box.querySelector('.mcm-auth-error'); const submit=box.querySelector('button[type=submit]'); submit.disabled=true; submit.textContent='Signing in...';
+      try{
+        const client=window.initMcmSupabase&&window.initMcmSupabase();
+        if(!client) throw new Error('Supabase client is not initialized.');
+        const result=await client.auth.signInWithPassword({email,password});
+        if(result.error) throw result.error;
+        const user=result.data.user;
+        const profile=await client.from('profiles').select('role,full_name').eq('id',user.id).single();
+        if(profile.error) throw new Error('Your account exists, but its MCM profile is missing.');
+        if(profile.data.role!==role) throw new Error('This account is not registered as a '+label+' account.');
+        localStorage.setItem('portalRole',profile.data.role);
+        localStorage.setItem('mcmUserName',profile.data.full_name||user.email);
+        box.remove(); location.hash=role==='svl'?'svl-dashboard':'student-dashboard';
+      }catch(err){error.textContent=err.message||'Login failed. Please check your details.'; submit.disabled=false; submit.textContent='Continue';}
     };
   }
   function render(){if(location.hash==='#login'||!location.hash){document.querySelector('#app').innerHTML=rolePage();document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>openLogin(b.dataset.role));let taps=0;const secret=document.querySelector('.mcm-secret');secret.onclick=()=>{if(++taps>=5){localStorage.setItem('portalRole','admin');location.hash='admin';taps=0;}};}}
