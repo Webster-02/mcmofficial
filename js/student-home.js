@@ -14,6 +14,7 @@ function studentHome(){
         <a href="#courses"><span>▤</span>My Courses</a>
         <a href="#notes"><span>▧</span>Slides & Notes</a>
         <a href="#discussions"><span>☷</span>Discussions</a>
+        <a href="#class-room"><span>◉</span>Class Room</a>
         <a href="#assignments"><span>✓</span>Assignments</a>
         <a href="#timetable"><span>□</span>Timetable</a>
         <a href="#notifications"><span>♧</span>Notifications</a>
@@ -26,10 +27,10 @@ function studentHome(){
       <section class="student-dashboard-content">
         <div class="student-dashboard-hero"><div><p class="student-label">MY CLASS MATTERS · STUDENT PORTAL</p><h1>Welcome back, Danish <span>👋</span></h1><p>Everything you need for your academic journey, organized in one place.</p></div><div class="student-hero-badge"><span></span> Academic account active<br><small>Fall Semester · 2026</small></div></div>
         <div class="student-stat-grid">
-          <a href="#courses" class="student-stat-card"><span class="student-stat-icon blue">▤</span><span><small>Assigned class</small><strong>BSCS 4A</strong><em>Computer Science</em></span><b>↗</b></a>
-          <a href="#profile" class="student-stat-card"><span class="student-stat-icon green">✦</span><span><small>Assigned SVL</small><strong>Dr. Ayesha Khan</strong><em>Your class supervisor</em></span><b>↗</b></a>
-          <a href="#class-room" class="student-stat-card"><span class="student-stat-icon purple">♧</span><span><small>Classmates</small><strong>32 Students</strong><em>Connected to your class</em></span><b>↗</b></a>
-          <a href="#attendance" class="student-stat-card"><span class="student-stat-icon orange">✓</span><span><small>Attendance</small><strong>88% <mark>Good</mark></strong><em>Current attendance</em></span><b>↗</b></a>
+          <div class="student-stat-card"><span class="student-stat-icon blue">▤</span><span><small>Assigned class</small><strong>BSCS 4A</strong><em>Computer Science</em></span></div>
+          <div class="student-stat-card"><span class="student-stat-icon green">✦</span><span><small>Assigned SVL</small><strong>Dr. Ayesha Khan</strong><em>Your class supervisor</em></span></div>
+          <div class="student-stat-card"><span class="student-stat-icon purple">♧</span><span><small>Classmates</small><strong>32 Students</strong><em>Connected to your class</em></span></div>
+          <div class="student-stat-card"><span class="student-stat-icon orange">✓</span><span><small>Attendance</small><strong>88% <mark>Good</mark></strong><em>Current attendance</em></span></div>
         </div>
         <div class="student-quick-grid">
           <a class="student-quick-card primary" href="#class-room"><span>◉</span><strong>Class Room<small>Connect with your class</small></strong><b>→</b></a>
