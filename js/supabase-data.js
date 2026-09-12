@@ -14,6 +14,7 @@ const api={
  async addNotice(payload){const c=api.client();const r=await c.from('notices').insert(payload).select().single();if(r.error)throw r.error;return r.data},
  async timetable(classId){const c=api.client();let q=c.from('timetable').select('*').order('day').order('start_time');if(classId)q=q.eq('class_id',classId);const r=await q;if(r.error)throw r.error;return r.data||[]},
  async addTimetable(payload){const c=api.client();const r=await c.from('timetable').insert(payload).select().single();if(r.error)throw r.error;return r.data},
+ async deleteTimetable(id){const c=api.client();const r=await c.from('timetable').delete().eq('id',id);if(r.error)throw r.error;return true},
  async assignments(classId){const c=api.client();let q=c.from('assignments').select('*, assignment_submissions(*)').order('due_date',{ascending:true});if(classId)q=q.eq('class_id',classId);const r=await q;if(r.error)throw r.error;return r.data||[]},
  async attendance(studentId){const c=api.client();const u=await api.user();const id=studentId||u?.id;if(!id)return [];const r=await c.from('attendance').select('*').eq('student_id',id).order('attendance_date',{ascending:false});if(r.error)throw r.error;return r.data||[]},
  async discussions(classId){const c=api.client();let q=c.from('discussions').select('*, profiles:author_id(full_name,email), discussion_replies(*)').order('created_at',{ascending:false});if(classId)q=q.eq('class_id',classId);const r=await q;if(r.error)throw r.error;return r.data||[]},
