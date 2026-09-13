@@ -1,18 +1,44 @@
-(function(){
-  const protectedRoutes={
-    '#student-dashboard':'student',
-    '#svl-dashboard':'svl',
-    '#admin':'admin'
+(function () {
+  const protectedRoutes = {
+    '#student-dashboard': 'student',
+    '#svl-dashboard': 'svl',
+    '#admin': 'admin',
+    '#admin-management': 'admin'
   };
-  function checkAccess(){
-    const required=protectedRoutes[location.hash];
-    if(!required) return;
-    const role=localStorage.getItem('portalRole');
-    if(role!==required){
-      location.hash='#login';
-      setTimeout(()=>alert('Please select the correct portal for this page.'),50);
+
+  async function getSessionUser() {
+    const client = window.mcmSupabase || (window.initMcmSupabase && window.initMcmSupabase());
+    if (!client) return null;
+    const { data, error } = await client.auth.getSession();
+    if (error || !data.session) return null;
+    return data.session.user;
+  }
+
+  async function checkAccess() {
+    const required = protectedRoutes[location.hash];
+    if (!required) return;
+
+    const user = await getSessionUser();
+    if (!user) {
+      location.hash = '#login';
+      return;
+    }
+
+    const client = window.mcmSupabase;
+    const { data: profile, error } = await client
+      .from('profiles')
+      .select('role,status')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (error || !profile || profile.status === 'inactive' || profile.role !== required) {
+      await client.auth.signOut();
+      location.hash = '#login';
+      setTimeout(() => alert('Your account is not authorized for this portal.'), 50);
     }
   }
-  window.addEventListener('hashchange',checkAccess);
+
+  window.addEventListener('hashchange', checkAccess);
+  window.addEventListener('load', checkAccess);
   checkAccess();
 })();
